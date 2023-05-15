@@ -3,23 +3,24 @@ import { type Product } from "../../interfaces/products";
 import { Header } from "../../components";
 import Swal from "sweetalert2";
 import refreshToken from "../../services/refreshToken";
+import savedCourses from "../../services/savedCourses";
 
 export default function Cart() {
   const userData = JSON.parse(localStorage.getItem("userData") ?? "");
   const authTokens = JSON.parse(localStorage.getItem("authTokens") ?? "");
-  const [accessToken, setAccessToken] = useState(authTokens.access);
+  const [accessToken, setAccessToken] = useState<string>(authTokens.access);
 
-  const [products, setProducts] = useState(
+  const [products, setProducts] = useState<Product[]>(
     JSON.parse(localStorage.getItem("products_cart") ?? "[]")
   );
 
   const [nItem, setNum] = useState(
-    Number(JSON.parse(localStorage.getItem("n_item") ?? "[]"))
+    Number(JSON.parse(localStorage.getItem("n_item") ?? "0"))
   );
 
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState<number>(0);
 
-  const dataFetchedRef = useRef(false);
+  const dataFetchedRef = useRef<boolean>(false);
 
   const deleteProducts = (product: Product) => {
     const newProducts = products.filter(
@@ -52,6 +53,29 @@ export default function Cart() {
     localStorage.setItem("products_cart", JSON.stringify(products));
     localStorage.setItem("n_item", JSON.stringify(nItem));
   }, [products]);
+
+  const handlePaymentSuccess = () => {
+    savedCourses(products).then(() => {
+      Swal.fire(
+        "Created!",
+        "The payment was created successfully.",
+        "success"
+      ).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("products_cart");
+          localStorage.removeItem("n_item");
+          location.reload();
+        }
+      });
+    }).catch((error) => {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "An error occurred!",
+      });
+    });
+  };
 
   useEffect(() => {
     if (dataFetchedRef.current) return;
@@ -97,36 +121,34 @@ export default function Cart() {
               "http://127.0.0.1:8000/payment/create/",
               {
                 method: "POST",
-
                 headers: {
                   "Content-Type": "application/json",
                   Accept: "application/json",
                   Authorization: "Bearer " + accessToken,
                 },
-
                 body: JSON.stringify(cardFormData),
               }
             ).then((response) => {
-              if (response.ok) {
-                Swal.fire(
-                  "Created!",
-                  "The payment was created successfully.",
-                  "success"
-                ).then((result) => {
-                  if (result.isConfirmed) {
-                    localStorage.removeItem("products_cart");
-                    localStorage.removeItem("n_item");
-                    location.reload();
-                  }
-                });
-              } else {
-                Swal.fire({
-                  icon: "error",
-                  title: "Oops...",
-                  text: "An error occurred!",
-                });
-              }
-            });
+                if (response.ok) {
+                  Swal.fire(
+                    "Created!",
+                    "The payment was created successfully.",
+                    "success"
+                  ).then((result) => {
+                    if (result.isConfirmed) {
+                      localStorage.removeItem("products_cart");
+                      localStorage.removeItem("n_item");
+                      location.reload();
+                    }
+                  });
+                } else {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Oops...",
+                    text: "An error occurred!",
+                  });
+                }
+              });
             console.log("response", await response.json());
           },
           onError: (error: any) => {},
@@ -140,23 +162,27 @@ export default function Cart() {
     };
     renderCardPaymentBrick(bricksBuilder);
   }, [nItem, total, products]);
-
+  
   return (
     <>
       <Header />
-      <div className="mx-auto px-16 mt-3">
-        <h1 className="text-white text-center">Carrito de compras</h1>
+      <div className="mx-auto px-4 sm:px-8 md:px-12 lg:px-16 mt-3">
+        <h1 className="text-white text-center text-4xl mt-16 mb-16">
+          Carrito de compras
+        </h1>
         {products.length === 0 && (
-          <div className="custom-noProduct text-white">No hay productos añadidos</div>
+          <div className="custom-noProduct text-white text-3xl mb-16">
+            No hay productos añadidos
+          </div>
         )}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-5">
-          <div>
-            <h4 className="text-white">Payment</h4>
+        <div className="grid grid-cols-2 gap-8 mt-5 mr-4 ml-4 mb-8 md:mr-2 md:ml-2 lg:mr-2 lg:ml-2">
+          <div className="col-span-1">
+            <h4 className="text-white text-2xl">Payment</h4>
             <hr className="text-white mt-2" />
             <div id="cardPaymentBrick_container" className="mb-5 mt-4"></div>
           </div>
-          <div>
-            <h4 className="text-white">Orden Summary</h4>
+          <div className="col-span-1">
+            <h4 className="text-white text-2xl">Orden Summary</h4>
             <hr className="text-white mt-2" />
             {products.map((product: Product) => (
               <div
@@ -164,7 +190,7 @@ export default function Cart() {
                 key={product.product_code}
               >
                 <div className="grid grid-cols-12">
-                  <div className="col-span-2 flex iems-center">
+                  <div className="col-span-2 flex items-center">
                     <img
                       className="rounded"
                       src={product.image}
@@ -176,12 +202,14 @@ export default function Cart() {
                       alt=""
                     />
                   </div>
-                  <div className="col-span-8">
+                  <div className="col-span-7">
                     <h5 className="font-bold">{product.name}</h5>
                     <p>{product.type}</p>
                   </div>
-                  <div className="col-span-2 ml-12 items-center text-center justify-center">
-                    <p className="font-bold">$ {product.price.toFixed(2)}</p>
+                  <div className="col-span-3 flex items-center justify-center ml-8">
+                    <p className="font-bold mr-4">
+                      $ {product.price.toFixed(2)}
+                    </p>
                     <button
                       className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
                       onClick={() => deleteProducts(product)}
