@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
   const TOKEN_URL = "http://127.0.0.1:8000/user/token/";
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const response = await axios.post(

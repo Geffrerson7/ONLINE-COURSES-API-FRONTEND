@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { HomeView, CartView, PurchasedCourseView} from "../pages";
-import { Login } from "../components";
+import { HomeView, CartView, PurchasedCourseView, LoginView, RegisterView} from "../pages";
 
 
 export default function Router() {
@@ -21,7 +20,8 @@ export default function Router() {
           path="/my-courses"
           element={authTokens ? <PurchasedCourseView /> : <Navigate to="/login" />}
         />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginView />} />
+        <Route path="/register" element={<RegisterView />} />
       </Routes>
     </BrowserRouter>
   );
