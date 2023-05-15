@@ -33,7 +33,6 @@ const Login = () => {
         localStorage.setItem("userData", JSON.stringify(userData));
         console.log(navigate);
         navigate("/");
-        console.log("Navigate to /");
       }
     } catch (error) {
       Swal.fire({

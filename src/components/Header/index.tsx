@@ -5,8 +5,8 @@ export default function Header() {
     <header className="gradient-custom">
       <nav>
         <Link to="/" className="text-white">Home</Link>
-        <a href="#" className="text-white">About</a>
-        <Link to="/cart" className="text-white">Ir al Carrito</Link>
+        <Link to="/my-courses" className="text-white">My Courses</Link>
+        <Link to="/cart" className="text-white">Go to Shooping Cart</Link>
         <Logout />
       </nav>
     </header>
