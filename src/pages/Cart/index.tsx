@@ -3,7 +3,6 @@ import { type Product } from "../../interfaces/products";
 import { Header } from "../../components";
 import Swal from "sweetalert2";
 import refreshToken from "../../services/refreshToken";
-import savedCourses from "../../services/savedCourses";
 
 export default function Cart() {
   const userData = JSON.parse(localStorage.getItem("userData") ?? "");
@@ -54,28 +53,16 @@ export default function Cart() {
     localStorage.setItem("n_item", JSON.stringify(nItem));
   }, [products]);
 
-  const handlePaymentSuccess = () => {
-    savedCourses(products).then(() => {
-      Swal.fire(
-        "Created!",
-        "The payment was created successfully.",
-        "success"
-      ).then((result) => {
-        if (result.isConfirmed) {
-          localStorage.removeItem("products_cart");
-          localStorage.removeItem("n_item");
-          location.reload();
-        }
-      });
-    }).catch((error) => {
-      console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "An error occurred!",
-      });
-    });
-  };
+  const items = products.map((product: Product) => ({
+    id: product.id,
+    product_code: product.product_code,
+    type: product.type,
+    image: product.image,
+    name: product.name,
+    description: product.description,
+    price: product.price,
+  }));
+  console.log(items);
 
   useEffect(() => {
     if (dataFetchedRef.current) return;
@@ -104,7 +91,7 @@ export default function Cart() {
                 )
               : 0,
           payer: {
-            email: "",
+            email: userData.email,
           },
         },
         customization: {
@@ -126,30 +113,34 @@ export default function Cart() {
                   Accept: "application/json",
                   Authorization: "Bearer " + accessToken,
                 },
-                body: JSON.stringify(cardFormData),
+                body: JSON.stringify({
+                  ...cardFormData,
+                  additional_info: {
+                    items: items,
+                  },
+                }),
               }
             ).then((response) => {
-                if (response.ok) {
-                  Swal.fire(
-                    "Created!",
-                    "The payment was created successfully.",
-                    "success"
-                  ).then((result) => {
-                    if (result.isConfirmed) {
-                      localStorage.removeItem("products_cart");
-                      localStorage.removeItem("n_item");
-                      location.reload();
-                    }
-                  });
-                } else {
-                  Swal.fire({
-                    icon: "error",
-                    title: "Oops...",
-                    text: "An error occurred!",
-                  });
-                }
-              });
-            console.log("response", await response.json());
+              if (response.ok) {
+                Swal.fire(
+                  "Created!",
+                  "The payment was created successfully.",
+                  "success"
+                ).then((result) => {
+                  if (result.isConfirmed) {
+                    localStorage.removeItem("products_cart");
+                    localStorage.removeItem("n_item");
+                    location.reload();
+                  }
+                });
+              } else {
+                Swal.fire({
+                  icon: "error",
+                  title: "Oops...",
+                  text: "An error occurred!",
+                });
+              }
+            });
           },
           onError: (error: any) => {},
         },
@@ -162,7 +153,7 @@ export default function Cart() {
     };
     renderCardPaymentBrick(bricksBuilder);
   }, [nItem, total, products]);
-  
+
   return (
     <>
       <Header />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import refreshToken from "../../services/refreshToken";
 import CourseCard from "../../components/CourseCard";
 import { type Product } from "../../interfaces/products";
