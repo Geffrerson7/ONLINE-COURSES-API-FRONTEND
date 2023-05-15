@@ -1,5 +1,3 @@
-import React from "react";
-
 const CourseCard = ({ course }: any) => {
   return (
     <div className="bg-white rounded-2xl p-6 flex gap-4 drop-shadow-lg mt-2 mx-64 mb-4">
