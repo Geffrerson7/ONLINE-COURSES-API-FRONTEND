@@ -39,7 +39,7 @@ export default function Home() {
       <Header />
       <div className="mx-auto px-4 mb-5">
         <h1 className="mt-8 text-center text-white text-4xl mb-8">
-          Lista de Cursos
+          Courses List
         </h1>
         <div className="flex justify-center">
           <div className="grid grid-cols-3 md:grid-cols-1 xl:grid-cols-2 gap-8 mt-5">
