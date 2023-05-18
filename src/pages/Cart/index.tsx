@@ -158,12 +158,12 @@ export default function Cart() {
     <>
       <Header />
       <div className="mx-auto px-4 sm:px-8 md:px-12 lg:px-16 mt-3">
-        <h1 className="text-white text-center text-4xl mt-16 mb-16">
-          Carrito de compras
+        <h1 className="text-white text-center text-4xl mt-8 mb-16">
+          Shopping Cart
         </h1>
         {products.length === 0 && (
           <div className="custom-noProduct text-white text-3xl mb-16">
-            No hay productos añadidos
+            No courses added
           </div>
         )}
         <div className="grid grid-cols-2 gap-8 mt-5 mr-4 ml-4 mb-8 md:mr-2 md:ml-2 lg:mr-2 lg:ml-2">
@@ -217,14 +217,14 @@ export default function Cart() {
                 <div className="grid grid-cols-3">
                   {/* Fila 1 */}
                   <div className="col-span-2 mb-2">
-                    <p>Productos</p>
+                    <p>Products</p>
                   </div>
                   <div className="col-span-1 text-right mb-2">
                     <p>{nItem}</p>
                   </div>
                   {/* Fila 2 */}
                   <div className="col-span-2 mb-2">
-                    <p>Costo de envio</p>
+                    <p>Shipping cost</p>
                   </div>
                   <div className="col-span-1 text-right mb-2">
                     <p>0.00</p>

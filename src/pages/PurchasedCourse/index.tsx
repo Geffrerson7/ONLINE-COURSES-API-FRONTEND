@@ -52,16 +52,16 @@ const PurchasedCourses = () => {
       <div className="mt-16">
         {courses.length > 0 ? (
           <>
-            <h1 className="text-2xl text-center text-white mb-8">
-              Lista de cursos comprados
+            <h1 className="text-3xl text-center text-white mb-8">
+            List of purchased courses
             </h1>
             {courses.map((course) => (
               <CourseCard key={course.id} course={course} />
             ))}
           </>
         ) : (
-          <h1 className="text-2xl mt-8 text-center text-white">
-            No hay cursos comprados
+          <h1 className="text-3xl mt-8 text-center text-white">
+            No courses purchased
           </h1>
         )}
       </div>
