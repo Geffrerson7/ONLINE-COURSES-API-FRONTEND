@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import loggedUserData from "../../services/loggedUserData";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -7,7 +7,6 @@ import Swal from "sweetalert2";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
   const TOKEN_URL = "http://127.0.0.1:8000/user/token/";
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -31,8 +30,7 @@ const Login = () => {
         localStorage.setItem("authTokens", JSON.stringify(data));
         const userData = await loggedUserData(data.user_id);
         localStorage.setItem("userData", JSON.stringify(userData));
-        navigate("/");
-        window.location.reload();
+        window.location.href="/";
       }
     } catch (error) {
       Swal.fire({
@@ -88,12 +86,12 @@ const Login = () => {
             >
               Login
             </button>
-            <a
+            <Link
               className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
-              href="/register"
+              to="/register"
             >
               Are you register?
-            </a>
+            </Link>
           </div>
         </form>
       </div>
